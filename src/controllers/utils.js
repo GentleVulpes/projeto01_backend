@@ -6,12 +6,17 @@ function createToken(_sign, _secretKey, _header) {
     const token = jwt.sign(_sign, _secretKey, _header);
 }
 
-function verifyToken(_req, _res, _token, _key) {
+function verifyToken(_req, _res, _next, _token, _key) {
     const hasToken = req.headers['authorization'];
     if(!hasToken) {
         return res.status(401).json('não possui autorização para acessar esta página!');
     }
-    jwt.verify()
+    jwt.verify(_token, _key, (error, decoded) => {
+        if(error) {
+            return res.status(500).json('Falha ao autenticar o token!');
+        }
+    });
+    next();
 }
 
 function getDatabase(_req, _res, _path) {
