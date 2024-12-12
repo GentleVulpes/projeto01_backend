@@ -6,20 +6,14 @@ const utils = require('./utils');
 const databasePath = path.join(__dirname, '../databases/users.json');
 
 class User {
-    constructor(_name, _password, _email, _isAdmin){
+    constructor(_name, _password, _email, _isAdmin, _id){
         this.email = _email;
         this.name = _name;
         this.password = _password;
         this.isAdmin = _isAdmin;
+        this.id = _id;
     }
 };
-
-function validateUser(req, res, next) {
-    const hasToken = req.headers['authorization'];
-    if(!hasToken) {
-        return res.status(401).json('Acesso não autorizado!');
-    }
-}
 
 
 function userExist (_email, _users) {//verifica se o usuário existe no banco.
@@ -29,13 +23,16 @@ function userExist (_email, _users) {//verifica se o usuário existe no banco.
 
 
 function login (req, res, _users, _email, _password) {
-    // const { name, email, password } = req.body; 
-    // if(userExist(email)) {
-    //     if(_users.find((user)=>user.email === email).password === password){
-    //         console.log('logar');
-    //     }
-    //     console.log('não logar');
-    // }
+    const { name, email, password } = req.body; 
+    if(userExist(email)) {
+        const targetUser = _users.find((user)=>user.email === email);
+
+        if(targetUser.email === email && targetUser.password === password) {
+            utils.createToken(targetUser);
+            res.redirect();
+        }
+        console.log('não logar');
+    }
 }
 
 
@@ -50,8 +47,10 @@ function createUser (req, res) {
         return res.status(404).json("O usuário já existe!");//caso encontre um usuário, retorna um erro 404. 
     }
 
-    newUser = new User(name, password, email, false); //cria um novo usuário comum.
-    users.length === 0 ? users[0] = (newUser) : users.push(newUser); //adiciona-se um novo usuário no array.
+    const id = users.length === 0 ? id = 1 : id = users.length;
+    newUser = new User(name, password, email, false, id);
+    
+    users.length === 0 ? users[0] = newUser : users.push(newUser); //adiciona-se um novo usuário no array.
     
     utils.writeAtDatabase(req, res, users, databasePath);//sobrescreve-se o banco de dados no formato json.
 
