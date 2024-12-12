@@ -1,9 +1,13 @@
 const path = require('path');
 const fs = require('fs');
+require('dotenv').config();
 const jwt = require('jsonwebtoken');
 
-function createToken(_sign, _secretKey, _header) {
-    const token = jwt.sign(_sign, _secretKey, _header);
+
+function createToken(_sign) {
+    const token = jwt.sign(_sign, SECRET, { expiresIn: process.env.JWT_TIME });
+
+    jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: JWT_TIME });
 }
 
 function verifyToken(_req, _res, _next, _token, _key) {
