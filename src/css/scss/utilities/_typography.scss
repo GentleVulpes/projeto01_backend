@@ -1,0 +1,35 @@
+$font-family: "Poppins", sans-serif;
+
+/* FONT WEIGHT */
+$font-weight-light: 300;
+$font-weight-regular: 400;
+$font-weight-medium: 500;
+$font-weight-semibold: 600;
+$font-weight-bold: 700;
+$font-weight-extra-bold: 800;
+$font-weight-black: 900;
+
+/*FONT SIZE*/
+$h1-font-size: 42px;
+$label-font-size: 24px;
+$input-font-size: 18px;
+
+
+/*DEFINITIONS*/
+h1 {
+    font-family: $font-family;
+    font-weight: $font-weight-medium;
+    font-size: $h1-font-size;
+}
+
+label {
+    font-family: $font-family;
+    font-weight: $font-weight-medium;
+    font-size: $label-font-size;
+}
+
+input {
+    font-family: $font-family;
+    font-weight: $font-weight-medium;
+    font-size: $input-font-size;
+}

@@ -1,0 +1,30 @@
+.container {
+    padding: 30px;
+}
+
+#login .container {
+    width: 331px;
+}
+
+h1 { 
+    color: $base-color-01; 
+}
+
+h1::after {
+    color: $base-color-01;
+    width: 100%;
+    height: 9px;
+}
+
+label {
+    color: $base-color-01;
+    padding: 12px 12px;
+}
+
+input {
+    padding: 12px;
+    background-color: $support-color-01;
+    border-radius: $border-radius;
+    box-shadow: $drop-shadow-3;
+}
+

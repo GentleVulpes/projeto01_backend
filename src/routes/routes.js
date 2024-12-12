@@ -7,6 +7,7 @@ const { createUser, deleteUser, verifyAdminExistence, updateUser, userLogin } = 
 router.use(express.urlencoded({ extended: true }));
 router.use(express.json());
 
+
 router.get('/', verifyAdminExistence, page.mainPage); 
 
 router.get('/login', page.loginPage);

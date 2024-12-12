@@ -6,7 +6,7 @@ const utils = require('./utils');
 const databasePath = path.join(__dirname, '../databases/users.json');
 
 class User {
-    constructor(_name, _password, _email, _isAdmin, _id){
+    constructor(_name, _password, _email, _isAdmin, _id) {
         this.email = _email;
         this.name = _name;
         this.password = _password;
