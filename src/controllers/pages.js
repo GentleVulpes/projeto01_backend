@@ -16,5 +16,8 @@ function userUpdatePage(req, res) {
     res.sendFile(path.join(__dirname, '../html/userUpdate.html'))
 }
 
+function loginPage(req, res) {
+    res.sendFile(path.join(__dirname, '../html/login.html'))
+}
 
-module.exports = { signupPage, deletePage, mainPage, userUpdatePage };
+module.exports = { signupPage, deletePage, mainPage, userUpdatePage, loginPage };

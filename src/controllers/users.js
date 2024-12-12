@@ -22,16 +22,15 @@ function userExist (_email, _users) {//verifica se o usuário existe no banco.
 }
 
 
-function login (req, res, _users, _email, _password) {
-    const { name, email, password } = req.body; 
+function userLogin (req, res, _users, _email, _password) {
+    const { email, password } = req.body; 
     if(userExist(email)) {
         const targetUser = _users.find((user)=>user.email === email);
 
-        if(targetUser.email === email && targetUser.password === password) {
+        if(targetUser.password === password) {
             utils.createToken(targetUser);
-            res.redirect();
         }
-        console.log('não logar');
+        res.status(404).JSON('senha ou número de email inválido');
     }
 }
 
@@ -47,7 +46,9 @@ function createUser (req, res) {
         return res.status(404).json("O usuário já existe!");//caso encontre um usuário, retorna um erro 404. 
     }
 
-    const id = users.length === 0 ? id = 1 : id = users.length;
+    let  id = 0;
+    console.log('tamanho de users: ', users.length); 
+    users.length === 0 ? id = 1 : id = users.length + 1;
     newUser = new User(name, password, email, false, id);
     
     users.length === 0 ? users[0] = newUser : users.push(newUser); //adiciona-se um novo usuário no array.
@@ -113,4 +114,4 @@ function verifyAdminExistence (req, res, next) {
 }
 
 
-module.exports = { verifyAdminExistence, createUser, registeredUser, deleteUser, updateUser };
+module.exports = { verifyAdminExistence, createUser, registeredUser, deleteUser, updateUser, userLogin };
