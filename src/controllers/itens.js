@@ -5,23 +5,29 @@ const databasePath = path.join(__dirname, '../databases/itens.json');
 const utils = require('./utils');
 
 class Item {
-    constructor (_name, _quantity, _email, _id) {
+    constructor (_name, _rarity, _email) {
         this.name = _name;
-        this.quantity = _quantity;
-        this._email = _email;
-        this.id = _id;
+        this.email = _email;
+        this.rarity = _rarity;
     }
 }
 
+function itemExist(_itens, _email){
+
+    const targetItem = _itens.findIndex(item => item.email === _email);
+    return targetItem === -1 ? false : true;
+}
+
 function createItem(req, res){
-    const { name, quantity, email } = req.params;
+    const { name, rarity, email } = req.params;
     const data = utils.getDatabase(req, res, databasePath);
-
     let itens = JSON.parse(data);
-    let id = 0;
 
-    itens.length === 0 ? id = 1 : id = itens.length + 1;
-    let newItem = new Item(name, quantity, email, id);
+    if(itemExist(itens, email)){
+        return res.status(409).json('This user already have an item!');
+    }
+
+    let newItem = new Item(name, rarity, email);
 
     itens.length === 0 ? itens[0] = newItem : itens.push(newItem);
 
@@ -31,4 +37,36 @@ function createItem(req, res){
 
 }
 
-module.exports = { createItem };
+function updateItem(req, res) {
+        const data = utils.getDatabase(req, res, databasePath);
+        const { name, rarity, email} = req.params;
+        let itens = JSON.parse(data);
+        
+        const targetItemIndex = itens.findIndex(item => item.email === email);
+ 
+        if(targetItemIndex === -1) {
+            return res.status(404).json('item not found!');
+        }
+        else {
+            itens[targetItemIndex].name = name;
+            itens[targetItemIndex].rarity = rarity;
+            utils.writeAtDatabase(req, res, itens, databasePath);
+            return res.status(200).json('Item updated!');
+        }
+}
+function deleteItem(req, res) {
+    const { email } = req.params; //recebe o e-mail do corpo da requisição.
+        const data = utils.getDatabase(req, res, databasePath); //recebe o banco de dados no formato json.
+        let itens = JSON.parse(data); //converte data do formato json para um array.
+        if(!itemExist(itens, email)) { //se o usuário não existir.
+            return res.status(404).json('Nenhum usuário foi encontrado.');
+        }
+        itens = itens.filter(user => user.email !== email); 
+
+        utils.writeAtDatabase(req, res, itens, databasePath);
+        
+        return res.status(204).json("item excluído com sucesso!");
+    
+}
+
+module.exports = { createItem, updateItem, deleteItem };
