@@ -1,24 +1,36 @@
 const path = require('path');
 const express = require('express');
 const router = express.Router();
-const page = require('../controllers/pages');
-const { createUser, deleteUser, verifyAdminExistence, updateUser, userLogin } = require('../controllers/users');
+const { createUser, signIn, deleteUser, verifyAdminExistence, updateUser, userLogin } = require('../controllers/users');
+const { createCharacter } = require('../controllers/characters');
+const { createItem } = require('../controllers/itens');
+const { createToken } = require('../controllers/utils');
 
 router.use(express.urlencoded({ extended: true }));
 router.use(express.json());
 
+router.get('/install', verifyAdminExistence);
+router.post('/admin/register/:name/:email/:password', createUser(true));
+router.delete('/admin/delete/:id/:name/:email/:password', deleteUser);
+router.put('/admin/update/:id/:name/:email/:password', updateUser);
 
-router.get('/', verifyAdminExistence, page.mainPage); 
+//USERS
+router.get('/login/:name/:email/:password', signIn);
+router.post('/register/:name/:email/:password', createUser(false));
 
-router.get('/login', page.loginPage);
-router.post('/login/user/:id', userLogin);
+// router.get('/login/:user', authenticateJson);
 
-router.get('/signup', page.signupPage);
-router.post('/register', createUser);
 
-router.get('/remove', page.deletePage);
-router.post('/removed', deleteUser);
+router.post('/register/user/:email/item/:name/:quantity', createItem);
+router.post('/register/user/:email/character/:name/:level/:race', createCharacter);
 
-router.get('/userUpdate', page.userUpdatePage);
-router.post('/userUpdated', updateUser);
+
+
+// router.get('/registerAdmn');
+// router.put('/updateUser', authenticateJson);
+// router.put('/updateAdmin', authenticatJson);
+// router.remove('/removeUser', authenticatJson);
+
+
+
 module.exports = router;

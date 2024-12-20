@@ -12,5 +12,6 @@ app.use(bodyParser.json());
 app.use(routes);
 
 app.listen(PORT, () => {
-    console.log('running in the port 3001');
+    console.log('running in the port 3000');
+    console.log('chave:', process.env.JWT_SECRET);
 });

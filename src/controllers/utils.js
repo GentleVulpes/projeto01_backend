@@ -1,13 +1,17 @@
 const path = require('path');
 const fs = require('fs');
-require('dotenv').config();
 const jwt = require('jsonwebtoken');
 
 
-function createToken(_sign) {
-    const token = jwt.sign(_sign, SECRET, { expiresIn: process.env.JWT_TIME });
+function createToken(_payload) {
 
-    jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: JWT_TIME });
+    const token = jwt.sign(_payload, process.env.JWT_SECRET, { expiresIn: process.env.JWT_TIME });
+
+    if(token) {
+        return token;
+    }else{
+        console.log('não foi possível criar um token');
+    }
 }
 
 function validateToken(req, res, next) {
@@ -63,4 +67,4 @@ function writeAtDatabase(_req, _res, _dataJS, _path) {//adiciona o conteúdo a v
     return;
 }
 
-module.exports = { createToken, getDatabase, writeAtDatabase };
+module.exports = { createToken, getDatabase, writeAtDatabase, validateToken };

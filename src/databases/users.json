@@ -1,1 +1,1 @@
-[{"email":"ricardo@mail.com","name":"Ricardo Silva","password":"123","isAdmin":false,"id":1},{"email":"igor@mail.com","name":"Igor Almeida","password":"123","isAdmin":false,"id":2},{"email":"angela@mail.com","name":"Angela Oliveira","password":"123","isAdmin":false,"id":3}]
+[{"email":"admin@mail.com","name":"admin","password":"admin","isAdmin":true},{"email":"roberta@mail.com","name":"roberta","password":"12345","isAdmin":true,"id":2}]
