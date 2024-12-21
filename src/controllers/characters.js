@@ -3,6 +3,7 @@ const fs = require('fs');
 
 const databasePath = path.join(__dirname, '../models/characters.json');
 const utils = require('./utils');
+const{ AlreadyExists, InvalidLimitNumber, InvalidPageNumber, NotExists } = require('./erros');
 
 class  Character {
     constructor (_name, _level, _race, _email) {
@@ -24,7 +25,11 @@ function createCharacter(req, res) {
         const data = utils.getDatabase(req, res, databasePath);
     
         let characters = JSON.parse(data);
-        
+        if(characterExist) {
+            throw new AlreadyExists('Character');
+        }
+
+
         let newCharacter = new Character(name, level, race, email);
     
         characters.length === 0 ? characters[0] = newCharacter : characters.push(newCharacter);
@@ -42,7 +47,7 @@ function updateCharacter(req, res) {
     const targetCharacterIndex = characters.findIndex(character => character.email === email);
 
     if(targetCharacterIndex === -1) {
-        return res.status(404).json('Character not found!');
+        throw new NotFound('Character');
     }
     else {
 
@@ -62,13 +67,13 @@ function deleteCharacter(req, res) {
 
     let characters = JSON.parse(data); //converte data do formato json para um array.
     if(!characterExist(characters, email)) { //se o usuário não existir.
-        return res.status(404).json('Nenhum usuário foi encontrado.');
+        throw NotExists('User');
     }
     characters = characters.filter(user => user.email !== email); 
 
     utils.writeAtDatabase(req, res, characters, databasePath);
     
-    return res.status(204).json("item excluído com sucesso!");
+    return res.status(204).json("Item removed!");
         
 }
 
@@ -81,10 +86,10 @@ function listCharacters(req, res) {
     pagina = parseInt(pagina);
 
     if(![5, 10, 15].includes(limite)) {
-        return res.status(400).json('numero de limite inválido, o limite deve ser 5, 10 ou 15');
+        throw new InvalidLimitNumber();
     }
     if(pagina < 1) {
-        return res.status(400).json('o número de paginas deve ser no mínimo de 1');
+        throw new InvalidPageNumber();
     }
 
     const comeco = (pagina - 1) * limite;

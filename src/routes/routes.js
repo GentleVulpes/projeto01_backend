@@ -15,7 +15,7 @@ router.get('/install', verifyAdminExistence);
 
 //ADMIN - USER
 router.get('/admin/user/list/:limite/:pagina', validateToken, listUsers);
-router.post('/admin/user/register/:name/:email/:password', validateToken, createUser(true));
+router.post('/admin/user/register/:name/:email/:password',  validateToken, createUser(true));
 router.put('/admin/user/update/:id/:name/:email/:password', validateToken, updateUser);
 router.delete('/admin/user/delete/:id/:name/:email/:password', validateToken, deleteUser);
 
@@ -40,13 +40,6 @@ router.put ('/user/update/:name/:email/:password',validateToken, updateUser);
 
 //USER - CHARACTER
 router.post('/register/user/:email/character/:name/:level/:race',validateToken, createCharacter);
-
-
-
-// router.get('/registerAdmn');
-// router.put('/updateUser', authenticateJson);
-// router.put('/updateAdmin', authenticatJson);
-// router.remove('/removeUser', authenticatJson);
 
 
 

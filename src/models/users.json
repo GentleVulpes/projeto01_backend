@@ -1,1 +1,1 @@
-[{"email":"admin@mail.com","name":"admin","password":"admin","isAdmin":true},{"email":"roberta@mail.com","name":"roberta","password":"12345","isAdmin":true,"id":2}]
+[{"email":"admin@mail.com","name":"admin","password":"admin","isAdmin":true},{"email":"roberta@mail.com","name":"roberta","password":"12345","isAdmin":true,"id":2},{"email":"lucas@mail.com","name":"lucas","password":"123","isAdmin":true,"id":3}]

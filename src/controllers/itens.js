@@ -1,5 +1,6 @@
 const path = require('path');
 const fs = require('fs');
+const{ AlreadyExists, InvalidLimitNumber, InvalidPageNumber, NotExists } = require('./erros');
 
 const databasePath = path.join(__dirname, '../models/itens.json');
 const utils = require('./utils');
@@ -24,7 +25,7 @@ function createItem(req, res){
     let itens = JSON.parse(data);
 
     if(itemExist(itens, email)){
-        return res.status(409).json('This user already have an item!');
+        throw new AlreadyExists(Item);
     }
 
     let newItem = new Item(name, rarity, email);
@@ -45,7 +46,7 @@ function updateItem(req, res) {
         const targetItemIndex = itens.findIndex(item => item.email === email);
  
         if(targetItemIndex === -1) {
-            return res.status(404).json('item not found!');
+            throw new NotExists('Item');
         }
         else {
             itens[targetItemIndex].name = name;
@@ -60,13 +61,13 @@ function deleteItem(req, res) {
 
     let itens = JSON.parse(data); //converte data do formato json para um array.
     if(!itemExist(itens, email)) { //se o usuário não existir.
-        return res.status(404).json('Nenhum usuário foi encontrado.');
+        throw NotExists('User');
     }
     itens = itens.filter(user => user.email !== email); 
 
     utils.writeAtDatabase(req, res, itens, databasePath);
     
-    return res.status(204).json("item excluído com sucesso!");
+    return res.status(204).json("item deleted!");
     
 }
 
@@ -79,10 +80,10 @@ function listItens(req, res) {
     pagina = parseInt(pagina);
 
     if(![5, 10, 15].includes(limite)) {
-        return res.status(400).json('numero de limite inválido, o limite deve ser 5, 10 ou 15');
+        throw new InvalidLimitNumber();
     }
     if(pagina < 1) {
-        return res.status(400).json('o número de paginas deve ser no mínimo de 1');
+        throw new InvalidPageNumber();
     }
 
     const comeco = (pagina - 1) * limite;

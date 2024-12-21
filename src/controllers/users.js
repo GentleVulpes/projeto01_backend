@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const jwt = require('jsonwebtoken');
 const utils = require('./utils');
+const{ AlreadyExists, InvalidLimitNumber, InvalidPageNumber, WrongPassword, NotExists } = require('./erros');
 const databasePath = path.join(__dirname, '../models/users.json');
 
 class User {
@@ -26,7 +27,7 @@ function createUser (_isAdmin) {
         let users = JSON.parse(data);//converte do formato json para um arquivo js.
 
         if(userExist (email, users)) { //se o usuário existe.
-            return res.status(404).json("O usuário já existe!");//caso encontre um usuário, retorna um erro 404. 
+            throw new AlreadyExists('User');
         }
 
         let  id = 0;
@@ -51,7 +52,7 @@ function signIn (req, res, next) {
 
     if(findUser) { //se achou um usuário com o email passado por parâmetro.
         if(findUser.password !== password) {//verifica se o password passado por parâmetro é diferente do password do banco.
-            return res.status(401).json('Wrong password!');
+            throw new WrongPassword();
         }
         else {//se for igual ao password do banco.
             const token = utils.createToken(findUser);//cria um
@@ -59,7 +60,7 @@ function signIn (req, res, next) {
             return res.status(200).json('Logged Sucessfully!' + token);
         }
     } else {
-        return res.status(404).json('user not exist!');
+        throw new NotExists('User');
     }
 }
 
@@ -70,7 +71,7 @@ function updateUser (req, res) {
      targetUserIndex = users.findIndex(user => user.id == id);
 
     if(targetUserIndex === -1) {
-        return res.status(404).json('Nenhum usuário foi encontrado.');
+        throw new NotExists('User');
     }
     else {
         users[targetUserIndex].name = name;
@@ -86,7 +87,7 @@ function deleteUser (req, res) {
     const data = utils.getDatabase(req, res, databasePath); //recebe o banco de dados no formato json.
     let users = JSON.parse(data); //converte data do formato json para um array.
     if(!userExist(email, users)) { //se o usuário não existir.
-        return res.status(404).json('User doesnt exist!.');
+        throw new NotExists('User');
     }
     users = users.filter(user => user.email !== email); //retorna todos os usuários que tiverem o email(chave primária) diferentes do procurado.
     utils.writeAtDatabase(req, res, users, databasePath); //reescreve o json sem o usuário removido.
@@ -107,7 +108,7 @@ function verifyAdminExistence (req, res, next) {
         return res.status(201).json('Administrator created!');
     }
     else{
-        return res.status(409).json('default admin user already exists!');
+        throw new AlreadyExists('Admin');
     }
 }
 
@@ -120,10 +121,10 @@ function listUsers(req, res) {
     pagina = parseInt(pagina);
 
     if(![5, 10, 15].includes(limite)) {
-        return res.status(400).json('numero de limite inválido, o limite deve ser 5, 10 ou 15');
+        throw new InvalidLimitNumber();
     }
     if(pagina < 1) {
-        return res.status(400).json('o número de paginas deve ser no mínimo de 1');
+        throw new InvalidPageNumber();
     }
 
     const comeco = (pagina - 1) * limite;
