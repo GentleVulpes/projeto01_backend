@@ -46,4 +46,20 @@ class InvalidPageNumber extends Error {
     }
 }
 
-module.exports = { NotFound, AlreadyExists, InvalidLimitNumber, InvalidPageNumber, NotExists, WrongPassword };
+class TokenCreationError extends Error {
+    constructor() {
+        super('Cannot create token!');
+        this.name = this.constructor.name;
+        this.statusCode = 500;
+    }
+}
+
+class TokenAuthenticationError extends Error {
+    constructor() {
+        super('Cannot authenticate token!');
+        this.name = this.constructor.name;
+        this.statusCode = 403;
+    }
+}
+
+module.exports = { NotFound, AlreadyExists, InvalidLimitNumber, InvalidPageNumber, NotExists, WrongPassword, TokenCreationError, TokenAuthenticationError };

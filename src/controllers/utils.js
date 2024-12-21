@@ -1,7 +1,7 @@
 const path = require('path');
 const fs = require('fs');
 const jwt = require('jsonwebtoken');
-
+const{ AlreadyExists, InvalidLimitNumber, InvalidPageNumber, WrongPassword, NotExists, TokenCreationError, TokenAuthenticationError } = require('./erros');
 
 function createToken(_payload) {
 
@@ -10,7 +10,7 @@ function createToken(_payload) {
     if(token) {
         return token;
     }else{
-        return res.status(500).json('não foi possível criar um token');
+        throw new TokenCreationError();
     }
 }
 
@@ -24,7 +24,7 @@ function validateToken(req, res, next) {
         req.user = jwt.verify(token, process.env.JWT_SECRET);
     }
     catch(error) {
-        return res.status(403).json('Acesso negado, token inválido!');
+        throw new TokenAuthenticationError();
     }
     next();
 }
@@ -36,7 +36,7 @@ function verifyToken(_req, _res, _next, _token, _key) {
     }
     jwt.verify(_token, _key, (error, decoded) => {
         if(error) {
-            return res.status(500).json('Falha ao autenticar o token!');
+            throw new TokenAuthenticationError();
         }
     });
     next();
@@ -50,11 +50,11 @@ function getDatabase(_req, _res, _path) {
             data = fs.readFileSync(_path, 'utf8');//lê-se o arquivo json contendo o banco de dados.
         }
         catch(error) {
-            return _res.status(404).json('Não foi possível acessar o banco de dados!' + error);//caso encontre um erro, retorna um erro 404.
+            throw new NotExists('Database');
         }
         return data;
     }else {
-        return _res.status(404).json('O banco de dados não existe');
+        throw new NotExists('Database');
     }
 }
 
@@ -63,7 +63,7 @@ function writeAtDatabase(_req, _res, _dataJS, _path) {//adiciona o conteúdo a v
         fs.writeFileSync(_path, JSON.stringify(_dataJS));    
     }
     catch (error) {
-        res.status(404).json('Erro ao tentar escrever no banco!' + error);
+        throw new NotExists('Database');
     }
     return;
 }

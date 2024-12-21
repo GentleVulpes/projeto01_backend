@@ -2,7 +2,7 @@ const path = require('path');
 const express = require('express');
 const router = express.Router();
 const { createUser, signIn, deleteUser, verifyAdminExistence, updateUser, listUsers } = require('../controllers/users');
-const { createCharacter, updateCharacter, deleteCharacter, listCharacters } = require('../controllers/characters');
+const { createCharacter, updateCharacter, deleteCharacter, listCharacters, listNumbeOfRacePlayers } = require('../controllers/characters');
 const { createItem, updateItem, deleteItem, listItens } = require('../controllers/itens');
 const { createToken, validateToken } = require('../controllers/utils');
 
@@ -18,6 +18,7 @@ router.get('/admin/user/list/:limite/:pagina', validateToken, listUsers);
 router.post('/admin/user/register/:name/:email/:password',  validateToken, createUser(true));
 router.put('/admin/user/update/:id/:name/:email/:password', validateToken, updateUser);
 router.delete('/admin/user/delete/:id/:name/:email/:password', validateToken, deleteUser);
+router.get('/admin/listNumberOfPlayersOfRace/:race', listNumbeOfRacePlayers);
 
 //ADMIN - ITEM
 router.get('/admin/item/list/:limite/:pagina', validateToken, listItens);

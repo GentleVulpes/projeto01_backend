@@ -99,4 +99,17 @@ function listCharacters(req, res) {
     return res.status(200).json(characters);
 }
 
-module.exports = { createCharacter, updateCharacter, deleteCharacter, listCharacters };
+function listNumbeOfRacePlayers(req, res) {
+    const { race } = req.params;
+    const data = utils.getDatabase(databasePath);
+    const characters = JSON.parse(data);
+    let counter = 0;
+    characters.forEach( (character) => {
+        if(character,race == race) {
+            counter++;
+        }
+    });
+    res.send("Number of players of the " + race + " race is " + counter, " players");
+}
+
+module.exports = { createCharacter, updateCharacter, deleteCharacter, listCharacters, listNumbeOfRacePlayers };
