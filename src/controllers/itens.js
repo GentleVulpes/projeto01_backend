@@ -56,16 +56,17 @@ function updateItem(req, res) {
 }
 function deleteItem(req, res) {
     const { email } = req.params; //recebe o e-mail do corpo da requisição.
-        const data = utils.getDatabase(req, res, databasePath); //recebe o banco de dados no formato json.
-        let itens = JSON.parse(data); //converte data do formato json para um array.
-        if(!itemExist(itens, email)) { //se o usuário não existir.
-            return res.status(404).json('Nenhum usuário foi encontrado.');
-        }
-        itens = itens.filter(user => user.email !== email); 
+    const data = utils.getDatabase(req, res, databasePath); //recebe o banco de dados no formato json.
+    
+    let itens = JSON.parse(data); //converte data do formato json para um array.
+    if(!itemExist(itens, email)) { //se o usuário não existir.
+        return res.status(404).json('Nenhum usuário foi encontrado.');
+    }
+    itens = itens.filter(user => user.email !== email); 
 
-        utils.writeAtDatabase(req, res, itens, databasePath);
-        
-        return res.status(204).json("item excluído com sucesso!");
+    utils.writeAtDatabase(req, res, itens, databasePath);
+    
+    return res.status(204).json("item excluído com sucesso!");
     
 }
 

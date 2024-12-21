@@ -19,6 +19,28 @@ function userExist (_email, _users) {//verifica se o usuário existe no banco.
     return exist;
 }
 
+function createUser (_isAdmin) {
+    return (req, res) => {
+        const { name, password, email } = req.params;
+        const data = utils.getDatabase(req, res, databasePath); //recebe o banco de dados no formato json. 
+        let users = JSON.parse(data);//converte do formato json para um arquivo js.
+
+        if(userExist (email, users)) { //se o usuário existe.
+            return res.status(404).json("O usuário já existe!");//caso encontre um usuário, retorna um erro 404. 
+        }
+
+        let  id = 0;
+        users.length === 0 ? id = 1 : id = users.length + 1;
+        newUser = new User(name, password, email, _isAdmin, id);
+        
+        users.length === 0 ? users[0] = newUser : users.push(newUser); //adiciona-se um novo usuário no array.
+        
+        utils.writeAtDatabase(req, res, users, databasePath);//sobrescreve-se o banco de dados no formato json.
+
+        return res.status(201).json(fs.readFileSync(databasePath, 'utf8'));//imprime o banco de dados na tela.
+        }
+}
+
 function signIn (req, res, next) {
     const { name, email, password } = req.params;
     const data = utils.getDatabase(req, res, databasePath); //recebe o banco de dados no formato json. 
@@ -90,27 +112,27 @@ function verifyAdminExistence (req, res, next) {
     }
 }
 
-function createUser (_isAdmin) {
-    return (req, res) => {
-        const { name, password, email } = req.params;
-        const data = utils.getDatabase(req, res, databasePath); //recebe o banco de dados no formato json. 
-        let users = JSON.parse(data);//converte do formato json para um arquivo js.
+function listUsers(req, res) {
+    const { limite, pagina } = req.params;
+    const data = utils.getDatabase(req, res, databasePath);
+    const users = JSON.parse(data);
 
-        if(userExist (email, users)) { //se o usuário existe.
-            return res.status(404).json("O usuário já existe!");//caso encontre um usuário, retorna um erro 404. 
-        }
+    limite = parseInt(limite);
+    pagina = parseInt(pagina);
 
-        let  id = 0;
-        users.length === 0 ? id = 1 : id = users.length + 1;
-        newUser = new User(name, password, email, _isAdmin, id);
-        
-        users.length === 0 ? users[0] = newUser : users.push(newUser); //adiciona-se um novo usuário no array.
-        
-        utils.writeAtDatabase(req, res, users, databasePath);//sobrescreve-se o banco de dados no formato json.
+    if(![5, 10, 15].includes(limite)) {
+        return res.status(400).json('numero de limite inválido, o limite deve ser 5, 10 ou 15');
+    }
+    if(pagina < 1) {
+        return res.status(400).json('o número de paginas deve ser no mínimo de 1');
+    }
 
-        return res.status(201).json(fs.readFileSync(databasePath, 'utf8'));//imprime o banco de dados na tela.
-        }
+    const comeco = (pagina - 1) * limite;
+    const final = comeco + limite;
+
+    users = users.slice(começo, final);
+    return res.status(200).json(users);
 }
-    
+
 
 module.exports = {createUser, signIn, updateUser, deleteUser, verifyAdminExistence};
