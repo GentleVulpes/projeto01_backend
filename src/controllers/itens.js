@@ -57,7 +57,7 @@ function updateItem(req, res) {
 function deleteItem(req, res) {
     const { email } = req.params; //recebe o e-mail do corpo da requisição.
     const data = utils.getDatabase(req, res, databasePath); //recebe o banco de dados no formato json.
-    
+
     let itens = JSON.parse(data); //converte data do formato json para um array.
     if(!itemExist(itens, email)) { //se o usuário não existir.
         return res.status(404).json('Nenhum usuário foi encontrado.');
@@ -70,4 +70,26 @@ function deleteItem(req, res) {
     
 }
 
-module.exports = { createItem, updateItem, deleteItem };
+function listItens(req, res) {
+    let { limite, pagina } = req.params;
+    const data = utils.getDatabase(req, res, databasePath);
+    let itens = JSON.parse(data);
+
+    limite = parseInt(limite);
+    pagina = parseInt(pagina);
+
+    if(![5, 10, 15].includes(limite)) {
+        return res.status(400).json('numero de limite inválido, o limite deve ser 5, 10 ou 15');
+    }
+    if(pagina < 1) {
+        return res.status(400).json('o número de paginas deve ser no mínimo de 1');
+    }
+
+    const comeco = (pagina - 1) * limite;
+    const final = comeco + limite;
+
+    itens = itens.slice(comeco, final);
+    return res.status(200).json(itens);
+}
+
+module.exports = { createItem, updateItem, deleteItem, listItens };

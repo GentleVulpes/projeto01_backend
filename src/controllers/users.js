@@ -51,17 +51,16 @@ function signIn (req, res, next) {
 
     if(findUser) { //se achou um usuário com o email passado por parâmetro.
         if(findUser.password !== password) {//verifica se o password passado por parâmetro é diferente do password do banco.
-            res.status(401).json('Wrong password!');
+            return res.status(401).json('Wrong password!');
         }
         else {//se for igual ao password do banco.
             const token = utils.createToken(findUser);//cria um
             // utils.validateToken(req, res, next);
-            res.status(200).json('Logged Sucessfully!' + token);
+            return res.status(200).json('Logged Sucessfully!' + token);
         }
     } else {
-        res.status(404).json('user not exist!');
+        return res.status(404).json('user not exist!');
     }
-    
 }
 
 function updateUser (req, res) {
@@ -105,17 +104,17 @@ function verifyAdminExistence (req, res, next) {
         const newUser = new User('admin', 'admin', 'admin@mail.com', true);
         users.length === 0 ? users[0] = (newUser) : users.push(newUser);
         utils.writeAtDatabase(req, res, users, databasePath);
-        res.status(201).json('Administrator created!');
+        return res.status(201).json('Administrator created!');
     }
     else{
-        res.status(409).json('default admin user already exists!');
+        return res.status(409).json('default admin user already exists!');
     }
 }
 
 function listUsers(req, res) {
-    const { limite, pagina } = req.params;
+    let { limite, pagina } = req.params;
     const data = utils.getDatabase(req, res, databasePath);
-    const users = JSON.parse(data);
+    let users = JSON.parse(data);
 
     limite = parseInt(limite);
     pagina = parseInt(pagina);
@@ -130,9 +129,9 @@ function listUsers(req, res) {
     const comeco = (pagina - 1) * limite;
     const final = comeco + limite;
 
-    users = users.slice(começo, final);
+    users = users.slice(comeco, final);
     return res.status(200).json(users);
 }
 
 
-module.exports = {createUser, signIn, updateUser, deleteUser, verifyAdminExistence};
+module.exports = {createUser, signIn, updateUser, deleteUser, verifyAdminExistence, listUsers};

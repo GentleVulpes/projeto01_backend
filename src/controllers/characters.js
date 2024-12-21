@@ -72,4 +72,26 @@ function deleteCharacter(req, res) {
         
 }
 
-module.exports = { createCharacter, updateCharacter, deleteCharacter };
+function listCharacters(req, res) {
+    let { limite, pagina } = req.params;
+    const data = utils.getDatabase(req, res, databasePath);
+    let characters = JSON.parse(data);
+
+    limite = parseInt(limite);
+    pagina = parseInt(pagina);
+
+    if(![5, 10, 15].includes(limite)) {
+        return res.status(400).json('numero de limite inválido, o limite deve ser 5, 10 ou 15');
+    }
+    if(pagina < 1) {
+        return res.status(400).json('o número de paginas deve ser no mínimo de 1');
+    }
+
+    const comeco = (pagina - 1) * limite;
+    const final = comeco + limite;
+
+    characters = characters.slice(comeco, final);
+    return res.status(200).json(characters);
+}
+
+module.exports = { createCharacter, updateCharacter, deleteCharacter, listCharacters };

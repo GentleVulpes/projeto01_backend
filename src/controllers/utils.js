@@ -10,7 +10,7 @@ function createToken(_payload) {
     if(token) {
         return token;
     }else{
-        console.log('não foi possível criar um token');
+        return res.status(500).json('não foi possível criar um token');
     }
 }
 
@@ -24,8 +24,9 @@ function validateToken(req, res, next) {
         req.user = jwt.verify(token, process.env.JWT_SECRET);
     }
     catch(error) {
-        res.status(403).json('Acesso negado, token inválido!');
+        return res.status(403).json('Acesso negado, token inválido!');
     }
+    next();
 }
 
 function verifyToken(_req, _res, _next, _token, _key) {
