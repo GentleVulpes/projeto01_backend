@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const jwt = require('jsonwebtoken');
 const utils = require('./utils');
-const databasePath = path.join(__dirname, '../databases/users.json');
+const databasePath = path.join(__dirname, '../models/users.json');
 
 class User {
     constructor(_name, _password, _email, _isAdmin, _id) {

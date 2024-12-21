@@ -1,7 +1,7 @@
 const path = require('path');
 const fs = require('fs');
 
-const databasePath = path.join(__dirname, '../databases/itens.json');
+const databasePath = path.join(__dirname, '../models/itens.json');
 const utils = require('./utils');
 
 class Item {
